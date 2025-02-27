@@ -5,9 +5,14 @@ import { AnnouncementsModule } from './announcements/announcements.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,  
+      envFilePath: '.env'
+    }),
     UsersModule,
     AnnouncementsModule,
     AuthModule,

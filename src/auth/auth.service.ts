@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { loginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 
 
 @Injectable()
@@ -22,6 +23,10 @@ export class AuthService {
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
+        console.log('isPasswordValid',isPasswordValid);
+        console.log(password, user.password);
+        console.log('user',user);
+
         if(user && isPasswordValid ){
             return user;
         }
@@ -31,6 +36,8 @@ export class AuthService {
     // Login method
 
     async login(loginDto: loginDto): Promise< {acces_token: string}>{
+
+        console.log('loginDto',loginDto);
 
         const user = await this.validateUser(loginDto.email,loginDto.password);
         const payload = {sub: user.id, email: user.email};
@@ -46,5 +53,12 @@ export class AuthService {
         const user = this.userService.createUser(registerDto);
         return user;
     }
+
+
+    async validateGoogleUser(googleUser: CreateUserDto) {
+        const user = await this.userService.findByEmail(googleUser.email);
+        if (user) return user;
+        return await this.userService.createUser(googleUser);
+      }
     
 }
