@@ -9,6 +9,9 @@ import { ConfigModule } from '@nestjs/config';
 import { ItemsController } from './items/items.controller';
 import { ItemsService } from './items/items.service';
 import { ItemsModule } from './items/items.module';
+import { CategoriesService } from './categories/categories.service';
+import { CategoriesController } from './categories/categories.controller';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -25,6 +28,7 @@ import { ItemsModule } from './items/items.module';
       }),
     }),
     ItemsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
