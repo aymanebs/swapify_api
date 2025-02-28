@@ -22,7 +22,6 @@ export class CategoriesService {
 
     async updateCategory(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category>{
         const category = await this.categoryModel.findById(id);
-        console.log("category: ",category);
         if(!category){
             throw new NotFoundException('No category found');
         }

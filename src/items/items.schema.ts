@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 @Schema({
     collection: 'items',
@@ -16,6 +16,9 @@ export class Item extends Document{
 
     @Prop({required: true})
     condition: string;
+
+    @Prop({required: true, type: Types.ObjectId, ref: 'Category'})
+    categoryId: Types.ObjectId;
 
 }
 

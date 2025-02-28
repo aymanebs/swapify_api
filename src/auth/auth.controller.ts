@@ -31,7 +31,6 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('auth/google/callback')
   async googleCallback(@Req() req, @Res() res) {
-    console.log(' req.user',req.user);
     const user = {email: req.user.email, password: req.user.password};
     const response = await this.authsService.login(user);
     res.redirect(`http://localhost:5173?token=${response.acces_token}`);

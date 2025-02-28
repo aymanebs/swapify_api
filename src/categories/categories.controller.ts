@@ -19,12 +19,12 @@ export class CategoriesController {
     }
 
     @Put('/:id')
-    async update(@Param() id: string,@Body() updateCategoryDto: UpdateCategoryDto){
+    async update(@Param('id') id: string,@Body() updateCategoryDto: UpdateCategoryDto){
         return await this.categoriesService.updateCategory(id, updateCategoryDto);
     }
 
     @Delete('/:id')
-    async delete(@Param() id: string){
+    async delete(@Param('id') id: string){
         return await this.categoriesService.delete(id);
     }
 }

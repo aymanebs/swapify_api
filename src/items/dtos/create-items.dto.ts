@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
+import { Types } from "mongoose";
 
 
 export class CreateItemDto{
@@ -17,5 +18,9 @@ export class CreateItemDto{
     @IsNotEmpty()
     @IsString()
     condition: string
+
+    @IsNotEmpty()
+    @IsString()
+    categoryId: Types.ObjectId
 
 }

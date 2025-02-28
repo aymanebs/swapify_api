@@ -23,10 +23,6 @@ export class AuthService {
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
-        console.log('isPasswordValid',isPasswordValid);
-        console.log(password, user.password);
-        console.log('user',user);
-
         if(user && isPasswordValid ){
             return user;
         }
@@ -36,8 +32,6 @@ export class AuthService {
     // Login method
 
     async login(loginDto: loginDto): Promise< {acces_token: string}>{
-
-        console.log('loginDto',loginDto);
 
         const user = await this.validateUser(loginDto.email,loginDto.password);
         const payload = {sub: user.id, email: user.email};
