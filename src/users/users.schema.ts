@@ -16,6 +16,9 @@ export class User extends Document{
     @Prop({required:true,unique:true,lowercase:true,trim:true})
     email: string;
 
+    @Prop({required: false})
+    avatar: string;
+
     @Prop({required:true,minlength:8})
     password: string;
     

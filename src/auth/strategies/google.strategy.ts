@@ -26,15 +26,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: VerifyCallback,
   ) {
-   
+    console.log('profile', profile);
+    console.log('done',done);
     const user = await this.authService.validateGoogleUser({
       email: profile.emails[0].value,
       first_name: profile.name.givenName,
       last_name: profile.name.familyName,
-    //   avatarUrl: profile.photos[0].value,
+      avatar: profile.photos[0].value,
       password: '',
     });
-    done(null, user);
+    // done(null, user);
     return user;
   }
 }
