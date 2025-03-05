@@ -20,6 +20,8 @@ export class Item extends Document{
     @Prop({required: true, type: Types.ObjectId, ref: 'Category'})
     category: Types.ObjectId;
 
+    @Prop({required: true, type: Types.ObjectId, ref: 'User'})
+    userId: Types.ObjectId
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

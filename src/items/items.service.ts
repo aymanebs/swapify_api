@@ -9,17 +9,30 @@ import { UpdateItemDto } from './dtos/update-items.dto';
 export class ItemsService {
     constructor(@InjectModel("Item") private readonly itemModel: Model<Item>){}
 
-    async createItem(createItemDto: CreateItemDto): Promise<Item> {
-        const Item = await new this.itemModel({...createItemDto});
+    async createItem(createItemDto: CreateItemDto, userId: string): Promise<Item> {
+        console.log('userId ', userId);
+        const Item = await new this.itemModel({...createItemDto,userId});
         return Item.save();
     }
     
     async getItemById(id: string): Promise<Item>{
-        const item = await this.itemModel.findById(id).exec();
+        const item = await this.itemModel.findById(id).populate({
+            path: 'category',
+            select: 'name',
+        }).exec();
         if(!item){
             throw new NotFoundException('Item not found');
         }
         return item;
+    }
+
+    async getItemsByUserId(userId: string): Promise<Item[]>{
+
+        const items = await this.itemModel.find({userId}).exec();
+        if(!items || items.length == 0){
+            throw new NotFoundException('No items found');
+        }
+        return items;
     }
 
     async getAllItems() : Promise<Item[]>{
