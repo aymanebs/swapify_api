@@ -18,7 +18,7 @@ export class Item extends Document{
     condition: string;
 
     @Prop({required: true, type: Types.ObjectId, ref: 'Category'})
-    categoryId: Types.ObjectId;
+    category: Types.ObjectId;
 
 }
 

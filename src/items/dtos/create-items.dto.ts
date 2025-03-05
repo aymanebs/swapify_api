@@ -21,6 +21,6 @@ export class CreateItemDto{
 
     @IsNotEmpty()
     @IsString()
-    categoryId: Types.ObjectId
+    category: Types.ObjectId
 
 }

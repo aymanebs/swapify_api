@@ -34,7 +34,8 @@ export class AuthController {
       console.log('req.user', req.user);
   
       const user = req.user;
-      const payload = { sub: user._id, email: user.email };
+      const {password, ...userToSend} = user
+      const payload = { sub: user._id, ...userToSend };
   
       const accessToken = await this.authsService.getJwtToken(payload);
   

@@ -23,7 +23,10 @@ export class ItemsService {
     }
 
     async getAllItems() : Promise<Item[]>{
-        const items = await this.itemModel.find().exec();
+        const items = await this.itemModel.find().populate({
+            path: 'category',
+            select: 'name',
+        }).exec();
         if(!items || items.length == 0){
             throw new NotFoundException('No item found');
         }
