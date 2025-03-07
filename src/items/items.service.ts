@@ -10,7 +10,6 @@ export class ItemsService {
     constructor(@InjectModel("Item") private readonly itemModel: Model<Item>){}
 
     async createItem(createItemDto: CreateItemDto, userId: string): Promise<Item> {
-        console.log('userId ', userId);
         const Item = await new this.itemModel({...createItemDto,userId});
         return Item.save();
     }
@@ -28,7 +27,10 @@ export class ItemsService {
 
     async getItemsByUserId(userId: string): Promise<Item[]>{
 
-        const items = await this.itemModel.find({userId}).exec();
+        const items = await this.itemModel.find({userId}).populate({
+            path: 'category',
+            select: 'name',
+        }).exec();
         if(!items || items.length == 0){
             throw new NotFoundException('No items found');
         }

@@ -19,11 +19,8 @@ export class AuthService {
 
     async validateUser(email: string,password: string): Promise<any>{
 
-        console.log("are you inside validateUser???? ");
 
         const user = await this.userService.findByEmail(email);
-
-        console.log("user inside this.validateUser", user);
 
         if (!user) throw new UnauthorizedException('Invalid credentials');
 
@@ -41,7 +38,6 @@ export class AuthService {
     // Login method
 
     async login(loginDto: loginDto): Promise< {acces_token: string}>{
-        console.log("are you inside login???? ");
         const user = await this.validateUser(loginDto.email,loginDto.password);
         const {password, ...userToSend} = user;
         const payload = {sub: user.id, ...userToSend};
@@ -60,9 +56,7 @@ export class AuthService {
 
 
     async validateGoogleUser(googleUser: CreateUserDto) {
-        console.log('googleUser', googleUser);
         const user = await this.userService.findByEmail(googleUser.email);
-        console.log('user', user);
         if (user) return user;
         return await this.userService.createUser(googleUser);
       }

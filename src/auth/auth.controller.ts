@@ -31,7 +31,6 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleCallback(@Req() req, @Res() res) {
-      console.log('req.user', req.user);
   
       const user = req.user;
       const {password, ...userToSend} = user
