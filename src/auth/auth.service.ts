@@ -19,13 +19,15 @@ export class AuthService {
 
     async validateUser(email: string,password: string): Promise<any>{
 
+
         const user = await this.userService.findByEmail(email);
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!user) throw new UnauthorizedException('Invalid credentials');
 
-        console.log('isPasswordValid',isPasswordValid);
-        console.log(password, user.password);
-        console.log('user',user);
+        if (!user.password) return user;
+
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if(user && isPasswordValid ){
             return user;
@@ -36,11 +38,9 @@ export class AuthService {
     // Login method
 
     async login(loginDto: loginDto): Promise< {acces_token: string}>{
-
-        console.log('loginDto',loginDto);
-
         const user = await this.validateUser(loginDto.email,loginDto.password);
-        const payload = {sub: user.id, email: user.email};
+        const {password, ...userToSend} = user;
+        const payload = {sub: user.id, ...userToSend};
 
         return {
             acces_token : await this.jwtService.signAsync(payload),
@@ -60,5 +60,9 @@ export class AuthService {
         if (user) return user;
         return await this.userService.createUser(googleUser);
       }
+
+    async getJwtToken(payload: any): Promise<string> {
+        return this.jwtService.signAsync(payload);
+    }
     
 }

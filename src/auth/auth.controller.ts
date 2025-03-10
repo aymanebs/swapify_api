@@ -6,7 +6,7 @@ import { Public } from 'src/decorators/public.decorator';
 import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
 
 
-@Controller()
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authsService: AuthService){}
 
@@ -29,12 +29,16 @@ export class AuthController {
 
   @Public()
   @UseGuards(GoogleAuthGuard)
-  @Get('auth/google/callback')
+  @Get('google/callback')
   async googleCallback(@Req() req, @Res() res) {
-    console.log(' req.user',req.user);
-    const user = {email: req.user.email, password: req.user.password};
-    const response = await this.authsService.login(user);
-    res.redirect(`http://localhost:5173?token=${response.acces_token}`);
+  
+      const user = req.user;
+      const {password, ...userToSend} = user
+      const payload = { sub: user._id, ...userToSend };
+  
+      const accessToken = await this.authsService.getJwtToken(payload);
+  
+      res.redirect(`http://localhost:5173?token=${accessToken}`);
   }
 
 
