@@ -16,7 +16,7 @@ export class Request extends Document{
     receiver: string;
 
     @Prop({required: true, type: Types.ObjectId, ref: 'Item'})
-    itemOffred: string;
+    itemOffered: string;
 
     @Prop({required: true, type: Types.ObjectId, ref: 'Item'})
     itemRequested: string;

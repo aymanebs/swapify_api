@@ -4,6 +4,9 @@ import { RequestStatus } from "src/enums/request-status.enum";
 export class CreateRequestDto {
 
     @IsString()
+    receiver: string;
+
+    @IsString()
     itemOffered: string;
 
     @IsString()
