@@ -24,7 +24,7 @@ export class Item extends Document{
     userId: Types.ObjectId
 
     @Prop({required: true})
-    photos: string
+    photos: string[]
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);
