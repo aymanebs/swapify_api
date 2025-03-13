@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -26,11 +26,75 @@ export class RequestsService {
   }
 
   async findAll() {
-    return await this.requestModel.find().exec();
+    const requests=  await this.requestModel.find().exec();
+    if(!requests || requests.length == 0){
+      throw new NotFoundException('Requests not found');
+    }
+    return requests;
   }
 
   async findOne(id: string) {
-    return await this.requestModel.findById(id).exec();
+    const request = await this.requestModel.findById(id).exec();
+    if(!request){
+      throw new NotFoundException('request not found');
+    }
+    return request;
+  }
+
+  async findByReceiverId(id: string){
+
+    const requests = await this.requestModel.find({receiver: id}).populate([{
+      path: 'sender',
+      select: 'first_name last_name avatar'
+    },
+    {
+      path: 'receiver',
+      select: 'first_name last_name avatar'
+    },
+    {
+      path: 'itemRequested',
+      select: 'name condition photos'
+    },
+    {
+      path: 'itemOffered',
+      select: 'name condition photos'
+    }
+  ]).exec();
+
+    if(!requests || requests.length == 0){
+      throw new NotFoundException('Received requests not found');
+    }
+
+    return requests;
+    
+  }
+
+  async findBySenderId(id: string){
+
+    const requests = await this.requestModel.find({sender: id}).populate([{
+      path: 'sender',
+      select: 'first_name last_name avatar'
+    },
+    {
+      path: 'receiver',
+      select: 'first_name last_name avatar'
+    },
+    {
+      path: 'itemRequested',
+      select: 'name condition photos'
+    },
+    {
+      path: 'itemOffered',
+      select: 'name condition photos'
+    }
+  ]).exec();
+
+    if(!requests || requests.length == 0){
+      throw new NotFoundException('Sender requests not found');
+    }
+
+    return requests;
+    
   }
 
   async update(id: string, updateRequestDto: UpdateRequestDto) {

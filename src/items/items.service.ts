@@ -15,10 +15,13 @@ export class ItemsService {
     }
     
     async getItemById(id: string): Promise<Item>{
-        const item = await this.itemModel.findById(id).populate({
+        const item = await this.itemModel.findById(id).populate([{
             path: 'category',
             select: 'name',
-        }).exec();
+        },{
+           path: 'userId',
+           select: 'first_name last_name', 
+        }]).exec();
         if(!item){
             throw new NotFoundException('Item not found');
         }

@@ -23,6 +23,18 @@ export class RequestsController {
     return this.requestsService.findAll();
   }
 
+  @Get('/received')
+  @UseGuards(JwtAuthGuard)
+  findByReceiverId(@Req() req){
+    return this.requestsService.findByReceiverId(req.user.userId);
+  }
+
+  @Get('/sent')
+  @UseGuards(JwtAuthGuard)
+  ffindBySenderId(@Req() req){
+    return this.requestsService.findBySenderId(req.user.userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.requestsService.findOne(id);
