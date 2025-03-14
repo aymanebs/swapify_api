@@ -1,6 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString, MinLength } from "class-validator";
 import { Types } from "mongoose";
-import { MessageStatus } from "src/enums/messages-status.enum";
 
 
 export class CreateMessageDto{
@@ -17,7 +16,4 @@ export class CreateMessageDto{
     @IsString()
     @MinLength(1)
     content: string;
-
-    @IsEnum(MessageStatus)
-    status?: MessageStatus;
 }

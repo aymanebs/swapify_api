@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Collection, Document, Types } from "mongoose";
-import { MessageStatus } from "src/enums/messages-status.enum";
 
 @Schema({
     collection: 'messages',
@@ -18,8 +17,8 @@ export class Message extends Document{
     @Prop({required: true, minlength: 1})
     content: string;
 
-    @Prop({enum: MessageStatus, default: MessageStatus.UNREAD})
-    status: string;
+    @Prop({default: false})
+    isRead: boolean;
 
 }
 

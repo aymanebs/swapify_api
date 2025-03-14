@@ -7,10 +7,6 @@ export class CreateChatDto{
     @IsString()
     @IsNotEmpty()
     messages: Types.ObjectId[];
-
-    @IsString()
-    @IsNotEmpty()
-    participants: Types.ObjectId[];
     
     @IsString()
     @IsNotEmpty()
