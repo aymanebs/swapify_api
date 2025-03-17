@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dtos/create-items.dto';
 import { Item } from './items.schema';
@@ -16,8 +16,6 @@ export class ItemsController {
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FilesInterceptor('images',5,multerConfig()))
     async create(@Body() createItemDto: CreateItemDto, @UploadedFiles() photos: Express.Multer.File[], @Req() req: any): Promise<Item>{
-        console.log('photos: ',photos);
-        console.log('body: ', createItemDto);
         const photoPaths = photos.map((photo) => photo.path);
         const userId = req.user.userId;
         return await this.itemService.createItem({...createItemDto,photos: photoPaths}, userId);
@@ -35,7 +33,7 @@ export class ItemsController {
     }
 
     @Get()
-    async getAll(): Promise<Item[]>{
+    async getAll(page: number = 1, @Query('limit') limit: number = 10){
         return await this.itemService.getAllItems();
     }
 

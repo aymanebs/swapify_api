@@ -40,15 +40,29 @@ export class ItemsService {
         return items;
     }
 
-    async getAllItems() : Promise<Item[]>{
+    async getAllItems(page: number = 1, limit: number = 10) : Promise<{ items: Item[], total: number, totalPages: number }>{
+
+        const skip = (page - 1) * limit;
+
+        const total = await this.itemModel.countDocuments();
+
         const items = await this.itemModel.find().populate({
             path: 'category',
             select: 'name',
-        }).exec();
+        })
+        .skip(skip)
+        .limit(limit)
+        .exec();
+
+
         if(!items || items.length == 0){
             throw new NotFoundException('No item found');
         }
-        return items;
+        return {
+            items,       
+            total,       
+            totalPages: Math.ceil(total / limit) 
+          };
 
     }
 
