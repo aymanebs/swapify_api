@@ -16,7 +16,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { RequestsModule } from './requests/requests.module';
 import { MessagesModule } from './messages/messages.module';
-import { ChatsModule } from './chats/chats.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+// import { ChatsModule } from './chats/chats.module';
+// import { GatewaysModule } from './gateways/gateways.module';
 
 @Module({
   imports: [
@@ -40,7 +42,9 @@ import { ChatsModule } from './chats/chats.module';
     CategoriesModule,
     RequestsModule,
     MessagesModule,
-    ChatsModule,
+    EventEmitterModule.forRoot()
+    // ChatsModule,
+    // GatewaysModule,
   ],
   controllers: [AppController],
   providers: [AppService],

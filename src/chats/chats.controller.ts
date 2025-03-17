@@ -18,7 +18,6 @@ export class ChatsController {
     @UseGuards(JwtAuthGuard)
     async getByParticipantId( @Req() req ){
         const id = req.user.userId;
-        console.log("ùùùù id", id);
         return await this.chatSerive.getChatByParticipantId(id);
     }
 

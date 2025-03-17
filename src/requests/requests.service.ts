@@ -5,12 +5,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Request } from './requests.schema';
 import { RequestGateway } from './requests.gateway';
+import { Chat } from 'src/chats/chats.schema';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class RequestsService {
   constructor(
     @InjectModel(Request.name) private readonly requestModel: Model<Request>,
+    @InjectModel(Chat.name) private readonly chatModel: Model<Chat>,
     private readonly requestGateway: RequestGateway,
+    private readonly eventEmitter: EventEmitter2
 ) {}
 
   async create(createRequestDto: CreateRequestDto, sender: string) {
@@ -98,6 +102,15 @@ export class RequestsService {
   }
 
   async update(id: string, updateRequestDto: UpdateRequestDto) {
-    return await this.requestModel.findByIdAndUpdate(id, updateRequestDto, { new: true }).exec();
+
+    const request = await this.requestModel.findByIdAndUpdate(id, updateRequestDto, { new: true }).exec();
+    if(request && request.status === 'accepted'){
+      const chatData = {participants: [request.sender,request.receiver], request: request._id, messages: []};
+      const chat = new this.chatModel(chatData);
+      await chat.save();
+      // event emiition
+      this.eventEmitter.emit('chat.created', chat);
+    }
+    return request;
   }
 }
