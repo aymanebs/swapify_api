@@ -27,4 +27,11 @@ export class UserService {
             throw new UnauthorizedException('Email already registred');
         }
     }
+
+    async findAll(): Promise<Omit<User, 'password'>[]> {
+
+        const users = await this.userModel.find({ email: { $not: /@admin\.com$/i } }).lean().exec();
+        return users.map(({ password, ...user }) => user);
+    }
+    
 }
