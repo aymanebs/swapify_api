@@ -66,6 +66,11 @@ export class ItemsService {
 
     }
 
+    async getRecentItems(){
+        const items= await this.itemModel.find().sort({createdAt: -1}).limit(5).exec();
+        return items;
+    }   
+
     async updateItem(id: string, updateItemDto: UpdateItemDto): Promise<Item>{
         await this.getItemById(id);
         return await this.itemModel.findByIdAndUpdate(id,updateItemDto,{new: true}).exec();

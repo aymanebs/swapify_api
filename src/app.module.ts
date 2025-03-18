@@ -17,6 +17,7 @@ import { join } from 'path';
 import { RequestsModule } from './requests/requests.module';
 import { MessagesModule } from './messages/messages.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ChatGateway } from './gateways/chat.gateway';
 // import { ChatsModule } from './chats/chats.module';
 // import { GatewaysModule } from './gateways/gateways.module';
 
@@ -30,6 +31,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
+    EventEmitterModule.forRoot(),
     UsersModule,
     AnnouncementsModule,
     AuthModule,
@@ -42,11 +44,11 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     CategoriesModule,
     RequestsModule,
     MessagesModule,
-    EventEmitterModule.forRoot()
+   
     // ChatsModule,
     // GatewaysModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}

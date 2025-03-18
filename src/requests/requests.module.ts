@@ -9,7 +9,7 @@ import { RequestGateway } from './requests.gateway';
 import { ChatSchema } from 'src/chats/chats.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{name: "Request", schema: RequestSchema}, {name: "User", schema: UserSchema}, {name: " Item", schema: ItemSchema}, {name: "Chat", schema: ChatSchema}])],
+  imports: [MongooseModule.forFeature([{name: "Request", schema: RequestSchema}, {name: "User", schema: UserSchema}, {name: "Item", schema: ItemSchema}, {name: "Chat", schema: ChatSchema}, {name: "Item", schema: ItemSchema}])],
   controllers: [RequestsController],
   providers: [RequestsService, RequestGateway],
 })

@@ -1,4 +1,5 @@
-import { OnEvent } from '@nestjs/event-emitter';
+import { Injectable } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import {
     WebSocketGateway,
     WebSocketServer,
@@ -8,20 +9,24 @@ import {
   } from '@nestjs/websockets';
   import { Server, Socket } from 'socket.io';
 
-  
+  @Injectable()
   @WebSocketGateway({ cors: { origin: '*' } }) 
   export class ChatGateway {
     @WebSocketServer()
     server: Server;
   
-    constructor() {}
+    constructor(private readonly eventEmitter: EventEmitter2) {}
 
     @OnEvent('chat.created')
     handleChatCreated(chat) {
-      // Notify both participants about the new chat
-      chat.participants.forEach((participant) => {
-        this.server.to(participant.toString()).emit('chatCreated', chat);
-      });
+        console.log('⚡ Emitting event to:', chat.participants);
+    
+        chat.participants.forEach((participant) => {
+            console.log(`🔵 Sending chat to participant: ${participant}`);
+            this.server.to(participant.toString()).emit('chatCreated', chat);
+        });
+    
+        console.log('⚡ Server rooms:', this.server.sockets.adapter.rooms);
     }
   
     // @SubscribeMessage('sendMessage')

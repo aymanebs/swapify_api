@@ -9,7 +9,7 @@ export class ChatsService {
     constructor(@InjectModel("Chat") private readonly chatModel: Model<Chat>){}
 
     async create(createChatDto: CreateChatDto){
-
+        
         const chat = await new this.chatModel({...createChatDto});
         return chat.save();
     }

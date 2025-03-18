@@ -27,6 +27,11 @@ export class ItemsController {
         return await this.itemService.getItemsByUserId(req.user.userId);
     }
 
+    @Get('/recent')
+    async getLastItems(): Promise<Item[]>{
+        return await this.itemService.getRecentItems();
+    }
+
     @Get('/:id')
     async getById(@Param('id') id: string): Promise<Item>{
         return  await this.itemService.getItemById(id);
