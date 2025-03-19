@@ -10,7 +10,7 @@ export class CreateMessageDto{
 
     @IsNotEmpty()
     @IsString()
-    receiver: Types.ObjectId;
+    chatId: Types.ObjectId;
 
     @IsNotEmpty()
     @IsString()

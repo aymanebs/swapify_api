@@ -13,17 +13,23 @@ export class MessagesService {
         @InjectModel("Chat") private readonly chatModel: Model<Chat>
     ){}
 
-    async create(createMessageDto: CreateMessageDto){
-        const message = await new this.messageModel(createMessageDto);
+    async create(createMessageDto: CreateMessageDto) {
+        console.log('... messages are about to be created');
+        const message = new this.messageModel(createMessageDto);
         const newMessage = await message.save();
-        const chat = await this.chatModel.findOne({participants:createMessageDto.sender, isActive: true}).exec();
-        if(chat){
-            chat.messages.push(new Types.ObjectId(newMessage._id.toString()));
-            await chat.save();
+        console.log('the message sender: ', createMessageDto.sender);
+    
+        const chat = await this.chatModel.findById(createMessageDto.chatId).exec();
+        console.log('Is the corresponding chat found?: ', chat);
+    
+        if (chat) {
+          console.log('saving the messages inside the chat');
+          chat.messages.push(new Types.ObjectId(newMessage._id.toString())); 
+          await chat.save();
         }
-
+    
         return newMessage;
-    }
+      }
 
     async update(messageId: string, updateMessageDto: UpdateMessageDto){
 

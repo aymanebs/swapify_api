@@ -51,7 +51,7 @@ export class ChatsService {
     
 
     async getChatById(chatId){
-        const chat = await this.chatModel.findById(chatId).exec();
+        const chat = await this.chatModel.findById(chatId).populate({path: 'messages',select: 'content'}).exec();
         if(!chat){
             throw new NotFoundException('Chat not found!');
         }

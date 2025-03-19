@@ -11,8 +11,6 @@ export class Message extends Document{
     @Prop({required: true, ref: 'User'})
     sender: Types.ObjectId;
 
-    @Prop({required: true, ref: 'User'})
-    receiver: Types.ObjectId;
 
     @Prop({required: true, minlength: 1})
     content: string;
