@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -20,6 +20,16 @@ export class RequestsService {
 ) {}
 
 async create(createRequestDto: CreateRequestDto, sender: string) {
+
+  const existingRequest = await this.requestModel.findOne({
+    receiver: createRequestDto.receiver,
+    sender: sender,
+    status: { $ne: 'rejected' } 
+  }).exec();  
+  
+  if(existingRequest){
+    throw new BadRequestException('Already send an exchange request for this item');
+  }
   const request = new this.requestModel({ ...createRequestDto, sender });
   await request.save();
 
@@ -116,11 +126,20 @@ async create(createRequestDto: CreateRequestDto, sender: string) {
       request: request._id,
       messages: [],
     };
+    
     const chat = new this.chatModel(chatData);
     await chat.save();
 
     // Emit chat creation event
     this.eventEmitter.emit('chat.created', chat);
+  }
+  else if (request.status === 'completed') {
+    // Emit an event when the request is marked as completed
+    this.eventEmitter.emit('request.completed', {
+      requestId: request._id,
+      senderId: request.sender,
+      receiverId: request.receiver,
+    });
   }
 
   return request;

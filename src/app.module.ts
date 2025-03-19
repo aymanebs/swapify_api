@@ -19,8 +19,7 @@ import { MessagesModule } from './messages/messages.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GatewaysModule } from './gateways/gateways.module';
 import { ChatsModule } from './chats/chats.module';
-// import { ChatsModule } from './chats/chats.module';
-// import { GatewaysModule } from './gateways/gateways.module';
+import { RatingModule } from './rating/rating.module';
 
 @Module({
   imports: [
@@ -47,6 +46,7 @@ import { ChatsModule } from './chats/chats.module';
     MessagesModule,  
     ChatsModule,
     GatewaysModule,
+    RatingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
