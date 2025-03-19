@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dtos/create-items.dto';
 import { Item } from './items.schema';
 import { UpdateItemDto } from './dtos/update-items.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { multerConfig } from 'src/config/multerConfig';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('items')
 export class ItemsController {
@@ -14,13 +14,11 @@ export class ItemsController {
 
     @Post()
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FileInterceptor('image',multerConfig()))
-    async create(@Body() createItemDto: CreateItemDto, @UploadedFile() photo: Express.Multer.File, @Req() req: any): Promise<Item>{
-        console.log('photo: ',photo);
-        console.log('body: ', createItemDto);
-        const photoPath = photo.path;
+    @UseInterceptors(FilesInterceptor('images',5,multerConfig()))
+    async create(@Body() createItemDto: CreateItemDto, @UploadedFiles() photos: Express.Multer.File[], @Req() req: any): Promise<Item>{
+        const photoPaths = photos.map((photo) => photo.path);
         const userId = req.user.userId;
-        return await this.itemService.createItem({...createItemDto,photos: photoPath}, userId);
+        return await this.itemService.createItem({...createItemDto,photos: photoPaths}, userId);
     }
 
     @Get('/me')
@@ -29,13 +27,18 @@ export class ItemsController {
         return await this.itemService.getItemsByUserId(req.user.userId);
     }
 
+    @Get('/recent')
+    async getLastItems(): Promise<Item[]>{
+        return await this.itemService.getRecentItems();
+    }
+
     @Get('/:id')
     async getById(@Param('id') id: string): Promise<Item>{
         return  await this.itemService.getItemById(id);
     }
 
     @Get()
-    async getAll(): Promise<Item[]>{
+    async getAll(page: number = 1, @Query('limit') limit: number = 10){
         return await this.itemService.getAllItems();
     }
 

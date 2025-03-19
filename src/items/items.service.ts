@@ -15,10 +15,13 @@ export class ItemsService {
     }
     
     async getItemById(id: string): Promise<Item>{
-        const item = await this.itemModel.findById(id).populate({
+        const item = await this.itemModel.findById(id).populate([{
             path: 'category',
             select: 'name',
-        }).exec();
+        },{
+           path: 'userId',
+           select: 'first_name last_name', 
+        }]).exec();
         if(!item){
             throw new NotFoundException('Item not found');
         }
@@ -37,17 +40,36 @@ export class ItemsService {
         return items;
     }
 
-    async getAllItems() : Promise<Item[]>{
+    async getAllItems(page: number = 1, limit: number = 10) : Promise<{ items: Item[], total: number, totalPages: number }>{
+
+        const skip = (page - 1) * limit;
+
+        const total = await this.itemModel.countDocuments();
+
         const items = await this.itemModel.find().populate({
             path: 'category',
             select: 'name',
-        }).exec();
+        })
+        .skip(skip)
+        .limit(limit)
+        .exec();
+
+
         if(!items || items.length == 0){
             throw new NotFoundException('No item found');
         }
-        return items;
+        return {
+            items,       
+            total,       
+            totalPages: Math.ceil(total / limit) 
+          };
 
     }
+
+    async getRecentItems(){
+        const items= await this.itemModel.find().sort({createdAt: -1}).limit(5).exec();
+        return items;
+    }   
 
     async updateItem(id: string, updateItemDto: UpdateItemDto): Promise<Item>{
         await this.getItemById(id);

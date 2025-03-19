@@ -24,6 +24,6 @@ export class CreateItemDto{
     category: Types.ObjectId
 
     @IsNotEmpty()
-    photos: string
+    photos: string[]
 
 }

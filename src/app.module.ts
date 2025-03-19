@@ -14,6 +14,13 @@ import { CategoriesController } from './categories/categories.controller';
 import { CategoriesModule } from './categories/categories.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { RequestsModule } from './requests/requests.module';
+import { MessagesModule } from './messages/messages.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { GatewaysModule } from './gateways/gateways.module';
+import { ChatsModule } from './chats/chats.module';
+// import { ChatsModule } from './chats/chats.module';
+// import { GatewaysModule } from './gateways/gateways.module';
 
 @Module({
   imports: [
@@ -25,6 +32,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
+    EventEmitterModule.forRoot(),
     UsersModule,
     AnnouncementsModule,
     AuthModule,
@@ -35,6 +43,10 @@ import { join } from 'path';
     }),
     ItemsModule,
     CategoriesModule,
+    RequestsModule,
+    MessagesModule,  
+    ChatsModule,
+    GatewaysModule,
   ],
   controllers: [AppController],
   providers: [AppService],
