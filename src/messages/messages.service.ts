@@ -5,7 +5,6 @@ import { Model, Types } from 'mongoose';
 import { Chat } from 'src/chats/chats.schema';
 import { CreateMessageDto } from './dtos/create-messages.dto';
 import { UpdateMessageDto } from './dtos/update-messages.dto';
-// import { ChatGateway } from 'src/gateways/chat.gateway';
 
 @Injectable()
 export class MessagesService {
@@ -22,7 +21,6 @@ export class MessagesService {
             chat.messages.push(new Types.ObjectId(newMessage._id.toString()));
             await chat.save();
         }
-        // this.chatGateway.server.to(createMessageDto.receiver.toString()).emit('newMessage', newMessage);
 
         return newMessage;
     }

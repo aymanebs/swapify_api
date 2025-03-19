@@ -17,7 +17,8 @@ import { join } from 'path';
 import { RequestsModule } from './requests/requests.module';
 import { MessagesModule } from './messages/messages.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ChatGateway } from './gateways/chat.gateway';
+import { GatewaysModule } from './gateways/gateways.module';
+import { ChatsModule } from './chats/chats.module';
 // import { ChatsModule } from './chats/chats.module';
 // import { GatewaysModule } from './gateways/gateways.module';
 
@@ -43,12 +44,11 @@ import { ChatGateway } from './gateways/chat.gateway';
     ItemsModule,
     CategoriesModule,
     RequestsModule,
-    MessagesModule,
-   
-    // ChatsModule,
-    // GatewaysModule,
+    MessagesModule,  
+    ChatsModule,
+    GatewaysModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
 })
 export class AppModule {}

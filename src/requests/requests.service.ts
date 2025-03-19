@@ -4,10 +4,10 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Request } from './requests.schema';
-import { RequestGateway } from './requests.gateway';
 import { Chat } from 'src/chats/chats.schema';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Item } from 'src/items/items.schema';
+import { EventsGateway } from 'src/gateways/events.gateway';
 
 @Injectable()
 export class RequestsService {
@@ -15,29 +15,22 @@ export class RequestsService {
     @InjectModel(Request.name) private readonly requestModel: Model<Request>,
     @InjectModel(Chat.name) private readonly chatModel: Model<Chat>,
     @InjectModel(Item.name) private readonly itemModel: Model<Item>,
-    @Inject(forwardRef(() => RequestGateway)) private readonly requestGateway: RequestGateway,
+    @Inject(forwardRef(() => EventsGateway)) private readonly eventsGateway: EventsGateway,
     private readonly eventEmitter: EventEmitter2
 ) {}
 
-  async create(createRequestDto: CreateRequestDto, sender: string) {
+async create(createRequestDto: CreateRequestDto, sender: string) {
+  const request = new this.requestModel({ ...createRequestDto, sender });
+  await request.save();
 
-    const itemRequested = await this.itemModel.findById(createRequestDto.itemRequested);
+  // Notify the receiver
+  this.eventsGateway.handleTradeRequest({
+    senderId: sender,
+    receiverId: createRequestDto.receiver,
+  });
 
-    console.log('itemRequested: ',itemRequested);
-    console.log('itemRequested.userId.toString()',itemRequested.userId.toString(),'sender',sender);
-    if(itemRequested.userId.toString() == sender){
-      console.log("should be unauthorized");
-      throw new UnauthorizedException('User cannot request his items');
-    }
-    const request = new this.requestModel({...createRequestDto, sender});
-
-    this.requestGateway.handleTradeRequest({
-      senderId: request.sender,
-      receiverId: request.receiver,
-    });
-
-    return await request.save();
-  }
+  return request;
+}
 
   async findAll() {
     const requests=  await this.requestModel.find().exec();
@@ -112,26 +105,26 @@ export class RequestsService {
     
   }
 
-  async update(id: string, updateRequestDto: UpdateRequestDto) {
 
-    const request = await this.requestModel.findByIdAndUpdate(id, updateRequestDto, { new: true }).exec();
+ async update(id: string, updateRequestDto: UpdateRequestDto) {
+  const request = await this.requestModel.findByIdAndUpdate(id, updateRequestDto, { new: true }).exec();
 
-    if(request && request.status === 'accepted'){
+  if (request && request.status === 'accepted') {
+    // Create a chat
+    const chatData = {
+      participants: [request.sender, request.receiver],
+      request: request._id,
+      messages: [],
+    };
+    const chat = new this.chatModel(chatData);
+    await chat.save();
 
-      console.log('🔵 Creating chat...');
-      const chatData = {participants: [request.sender,request.receiver], request: request._id, messages: []};
-      const chat = new this.chatModel(chatData);
-      await chat.save();
-      console.log('🟢 Chat created:', chat);
-
-      // event emiition
-      console.log('🔵 Emitting event: chat.created');
-      this.eventEmitter.emit('chat.created', chat);
-       const result = this.eventEmitter.emit('chat.created', chat);
-       console.log('🟢 Event emitted successfully, result:', result);
-    }
-    return request;
+    // Emit chat creation event
+    this.eventEmitter.emit('chat.created', chat);
   }
+
+  return request;
+}
 
   async getPendingRequests(userId){
 

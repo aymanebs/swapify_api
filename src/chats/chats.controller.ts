@@ -5,25 +5,26 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('chats')
 export class ChatsController {
-    constructor(private readonly chatSerive: ChatsService){}
+    constructor(private readonly chatService: ChatsService){}
 
     @Post()
     async create(@Body() createChatDto: CreateChatDto){
-
-        return await this.chatSerive.create(createChatDto);
+        return await this.chatService.create(createChatDto);
     }
 
    
-    @Get('/me')
+    @Get('/user') 
     @UseGuards(JwtAuthGuard)
-    async getByParticipantId( @Req() req ){
-        const id = req.user.userId;
-        return await this.chatSerive.getChatByParticipantId(id);
+    async getUserChats(@Req() req) {
+      console.log('Received request for /chats/user');
+      const userId = req.user.userId;
+      console.log('User ID from token:', userId);
+      return await this.chatService.getChatsForUser(userId);
     }
 
     @Get('/:id')
     async getChatById(@Param('id') id: string){
 
-        return await this.chatSerive.getChatById(id);
+        return await this.chatService.getChatById(id);
     }
 }

@@ -14,26 +14,41 @@ export class ChatsService {
         return chat.save();
     }
 
-    async getChatByParticipantId(participantId){
-
-        const id = new mongoose.Types.ObjectId(participantId);
-        const chat = await this.chatModel.find({participants: participantId }).populate([
+    async getChatsForUser(userId: string) {
+        console.log('Querying chats for user ID:', userId);
+      
+        // Match the user ID as a string
+        const query = { participants: userId };
+        console.log('Query:', query);
+      
+        const chats = await this.chatModel
+          .find(query)
+          .populate([
             {
-                path: 'participants',
-                select: 'first_name last_name avatar'
+              path: 'participants',
+              select: 'first_name last_name avatar',
             },
             {
-                path: 'messages',
-                select: 'content'
+              path: 'messages',
+              select: 'content',
             },
             {
-                path: 'request',
-                select: 'itemRequested itemOffered'
-            }
-        ]).exec();
-
-        return chat;
-    } 
+              path: 'request',
+              select: 'itemRequested itemOffered',
+            },
+          ])
+          .exec();
+      
+        console.log('Found chats:', chats);
+        console.log('Number of chats found:', chats.length);
+      
+        // Log the raw data from the database (without population)
+        const rawChats = await this.chatModel.find(query).lean().exec();
+        console.log('Raw chats from database:', rawChats);
+      
+        return chats;
+      }
+    
 
     async getChatById(chatId){
         const chat = await this.chatModel.findById(chatId).exec();
