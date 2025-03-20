@@ -17,9 +17,8 @@ export class ChatsService {
     async getChatsForUser(userId: string) {
         console.log('Querying chats for user ID:', userId);
       
-        // Match the user ID as a string
-        const query = { participants: userId };
-        console.log('Query:', query);
+        const query = { participants: userId,isActive: true,  };
+     
       
         const chats = await this.chatModel
           .find(query)
@@ -32,20 +31,9 @@ export class ChatsService {
               path: 'messages',
               select: 'content',
             },
-            {
-              path: 'request',
-              select: 'itemRequested itemOffered',
-            },
           ])
           .exec();
-      
-        console.log('Found chats:', chats);
-        console.log('Number of chats found:', chats.length);
-      
-        // Log the raw data from the database (without population)
-        const rawChats = await this.chatModel.find(query).lean().exec();
-        console.log('Raw chats from database:', rawChats);
-      
+         
         return chats;
       }
     
