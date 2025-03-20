@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Rating } from './rating.schema';
 import { CreateRatingDto } from './dtos/create-rating.dto';
 
@@ -36,10 +36,16 @@ export class RatingService {
     return rating;
   }
 
+
   async getUserAverageRating(userId: string) {
-    const ratings = await this.ratingModel.find({ ratedUser: userId });
+    console.log('Fetching ratings for user ID:', userId);
+  
+    // Query using the string format
+    const ratings = await this.ratingModel.find({ ratedUser: userId }).exec();
+    console.log('Ratings found:', ratings);
   
     if (ratings.length === 0) {
+      console.log('No ratings found for user:', userId);
       return { averageRating: 0, totalRatings: 0 };
     }
   
@@ -47,7 +53,7 @@ export class RatingService {
     const averageRating = totalScore / ratings.length;
   
     return {
-      averageRating: parseFloat(averageRating.toFixed(2)), 
+      averageRating: parseFloat(averageRating.toFixed(2)),
       totalRatings: ratings.length,
     };
   }

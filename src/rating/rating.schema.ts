@@ -5,21 +5,22 @@ import { Document, Types } from 'mongoose';
     collection: 'ratings',
     timestamps: true
  })
-export class Rating extends Document {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  ratedUser: Types.ObjectId; 
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  raterUser: Types.ObjectId; 
-
-  @Prop({ type: Types.ObjectId, ref: 'Request', required: true })
-  request: Types.ObjectId; 
-
-  @Prop({ type: Number, required: true, min: 1, max: 5 })
-  score: number; 
-
-  @Prop({ type: String, maxlength: 500 })
-  comment?: string; 
-}
+ export class Rating extends Document {
+   @Prop({ type: String, ref: 'User', required: true }) 
+   ratedUser: string;
+ 
+   @Prop({ type: String, ref: 'User', required: true }) 
+   raterUser: string;
+ 
+   @Prop({ type: String, ref: 'Request', required: true }) 
+   request: string;
+ 
+   @Prop({ type: Number, required: true, min: 1, max: 5 })
+   score: number;
+ 
+   @Prop({ type: String, maxlength: 500 })
+   comment?: string;
+ }
 
 export const RatingSchema = SchemaFactory.createForClass(Rating);
