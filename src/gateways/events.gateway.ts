@@ -14,7 +14,7 @@ import { Inject, forwardRef } from '@nestjs/common';
 import { RequestsService } from '../requests/requests.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { MessagesService } from 'src/messages/messages.service';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 @WebSocketGateway({ cors: true })
 export class EventsGateway
@@ -148,6 +148,24 @@ export class EventsGateway
     this.server.to(chatId).emit('newMessage', createdMessage);
   }
 
+ // Handle the request.completed event
+ @OnEvent('request.completed')
+ handleRequestCompleted(payload: {
+   requestId: Types.ObjectId;
+   senderId: Types.ObjectId;
+   receiverId: Types.ObjectId;
+ }) {
+   const { requestId, senderId, receiverId } = payload;
 
-
+   // Send a notification to the request sender
+   this.server.to(senderId.toString()).emit('requestCompleted', {
+     requestId,
+     receiverId,
+     message: 'The exchange has been completed. Please rate the receiver.',
+   });
+ }
+ 
 }
+
+
+
