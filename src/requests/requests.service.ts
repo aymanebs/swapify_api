@@ -34,7 +34,6 @@ export class RequestsService {
     const request = new this.requestModel({ ...createRequestDto, sender });
     await request.save();
 
-    // Notify the receiver
     this.eventsGateway.handleTradeRequest({
       senderId: sender,
       receiverId: createRequestDto.receiver,

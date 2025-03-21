@@ -1,4 +1,3 @@
-// src/gateways/events.gateway.ts
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -13,7 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { Inject, forwardRef } from '@nestjs/common';
 import { RequestsService } from '../requests/requests.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { MessagesService } from 'src/messages/messages.service';
+import { MessagesService } from '../messages/messages.service';
 import mongoose, { Types } from 'mongoose';
 
 @WebSocketGateway({ cors: true })
