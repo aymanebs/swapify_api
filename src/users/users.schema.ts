@@ -16,7 +16,7 @@ export class User extends Document{
     @Prop({required:true,unique:true,lowercase:true,trim:true})
     email: string;
 
-    @Prop({required: false})
+    @Prop({required: false, default: 'https://www.gravatar.com/avatar/?d=mp'})
     avatar: string;
 
     @Prop({required:true,minlength:8})

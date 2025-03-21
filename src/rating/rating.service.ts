@@ -40,7 +40,6 @@ export class RatingService {
   async getUserAverageRating(userId: string) {
     console.log('Fetching ratings for user ID:', userId);
   
-    // Query using the string format
     const ratings = await this.ratingModel.find({ ratedUser: userId }).exec();
     console.log('Ratings found:', ratings);
   

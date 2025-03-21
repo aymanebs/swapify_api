@@ -1,20 +1,37 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { UserController } from './user.controller';
-// import { UserService } from './users.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { UsersController } from './users.controller';
+import { UserService } from './users.service';
 
-// describe('UsersController', () => {
-//   let controller: UserController;
 
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       controllers: [UserController],
-//       providers: [UserService],
-//     }).compile();
+describe('UsersController', () => {
+  let controller: UsersController;
+  let service: UserService;
 
-//     controller = module.get<UserController>(UserController);
-//   });
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UsersController],
+      providers: [
+        {
+          provide: UserService,
+          useValue: {
+            findAll: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
 
-//   it('should be defined', () => {
-//     expect(controller).toBeDefined();
-//   });
-// });
+    controller = module.get<UsersController>(UsersController);
+    service = module.get<UserService>(UserService);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  describe('findAll', () => {
+    it('should call the service to get all users', async () => {
+      await controller.findAll();
+      expect(service.findAll).toHaveBeenCalled();
+    });
+  });
+});
