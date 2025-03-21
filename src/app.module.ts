@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/user.module';
-import { AnnouncementsModule } from './announcements/announcements.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -33,7 +32,6 @@ import { RatingModule } from './rating/rating.module';
     }),
     EventEmitterModule.forRoot(),
     UsersModule,
-    AnnouncementsModule,
     AuthModule,
     MongooseModule.forRootAsync({
       useFactory: () => ({

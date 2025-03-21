@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Collection, Document, Types } from "mongoose";
-import { RequestStatus } from "src/enums/request-status.enum";
+import { RequestStatus } from "../enums/request-status.enum";
 
 @Schema({
     collection: 'requests',
