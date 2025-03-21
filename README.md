@@ -1,6 +1,6 @@
 # Swapify API
 
-Swapify is a backend API built with **NestJS** and **MongoDB** to facilitate user interactions, messaging, and chat functionalities. It provides endpoints for authentication, user management, chat management, and message handling.
+Swapify is an API designed for a seamless **item-swapping platform**, enabling users to exchange goods without monetary transactions. Built with **NestJS** and **MongoDB**, it powers core functionalities such as **user authentication, item management, messaging, and chat interactions**. The API provides secure and efficient endpoints for managing users, chats, messages, and trade requests, ensuring a smooth and trustworthy swapping experience.
 
 ---
 
@@ -49,61 +49,65 @@ Swapify is a backend API built with **NestJS** and **MongoDB** to facilitate use
    ```bash
    git clone https://github.com/your-username/swapify-api.git
    cd swapify-api
+   ```
 
 2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-  bash
-  Copy
-  npm install
-  Set up environment variables:
-  Create a .env file in the root directory and add the following variables:
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add the following variables:
+   ```env
+   DATABASE_URI=mongodb://localhost:27017/swapify
+   JWT_SECRET=your-jwt-secret-key
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   ```
 
-  env
-  Copy
-  DATABASE_URI=mongodb://localhost:27017/swapify
-  JWT_SECRET=your-jwt-secret-key
-  GOOGLE_CLIENT_ID=your-google-client-id
-  GOOGLE_CLIENT_SECRET=your-google-client-secret
-  Run the application:
+4. Run the application:
+   ```bash
+   npm run start
+   ```
 
-  bash
-  Copy
-  npm run start
-  Access the API documentation:
-  Open your browser and navigate to: http://localhost:3000/api
+5. Access the API documentation:
+   Open your browser and navigate to: [http://localhost:3000/api](http://localhost:3000/api)
 
 ## API Endpoints
 
 ### Authentication
 
-  Method	Endpoint	Description
-  POST	/auth/login	Login with email and password.
-  POST	/auth/register	Register a new user.
-  GET	/auth/google	Initiate Google OAuth login.
-  GET	/auth/callback	Handle Google OAuth callback.
+| Method | Endpoint        | Description                         |
+|--------|----------------|-------------------------------------|
+| POST   | /auth/login    | Login with email and password.     |
+| POST   | /auth/register | Register a new user.               |
+| GET    | /auth/google   | Initiate Google OAuth login.       |
+| GET    | /auth/callback | Handle Google OAuth callback.      |
 
 ### Users
 
-  Method	Endpoint	Description
-  GET	/users	Get all users.
-  GET	/users/:id	Get a user by ID.
+| Method | Endpoint     | Description         |
+|--------|-------------|---------------------|
+| GET    | /users      | Get all users.      |
+| GET    | /users/:id  | Get a user by ID.   |
 
 ### Chats
 
-  Method	Endpoint	Description
-  POST	/chats	Create a new chat.
-  GET	/chats	Get all chats.
-  GET	/chats/:id	Get a chat by ID.
+| Method | Endpoint     | Description         |
+|--------|-------------|---------------------|
+| POST   | /chats      | Create a new chat.  |
+| GET    | /chats      | Get all chats.      |
+| GET    | /chats/:id  | Get a chat by ID.   |
 
 ### Messages
 
-  Method	Endpoint	Description
-  POST	/messages	Send a message in a chat.
-  PATCH	/messages/:id	Update a message.
+| Method | Endpoint         | Description             |
+|--------|-----------------|-------------------------|
+| POST   | /messages       | Send a message in a chat. |
+| PATCH  | /messages/:id   | Update a message.       |
 
 ## Testing
-To run the unit tests, use the following command:
 
-  bash
-  Copy
-  npm test
+To run the unit tests, use the following command:
+```bash
+npm test
