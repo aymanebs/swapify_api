@@ -163,6 +163,11 @@ export class EventsGateway
      message: 'The exchange has been completed. Please rate the receiver.',
    });
  }
+
+ @SubscribeMessage('itemDeleted')
+ handleItemDeleted(@MessageBody() payload: { chatId: string, itemId: string, message: string }) {
+     this.server.to(payload.chatId).emit('itemDeleted', payload);
+ }
  
 }
 

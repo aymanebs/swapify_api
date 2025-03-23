@@ -46,4 +46,9 @@ export class ChatsService {
         return chat;
     }
 
+    async getChatsByItemId(itemId: string) {
+      const chats = await this.chatModel.find({ requests: { $in: [itemId] } }).exec();
+      return chats;
+  }
+
 }

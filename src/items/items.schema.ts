@@ -25,6 +25,9 @@ export class Item extends Document{
 
     @Prop({required: true})
     photos: string[]
+
+    @Prop({default: true})
+    isAvailable: boolean;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

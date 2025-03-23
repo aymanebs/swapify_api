@@ -118,62 +118,100 @@ export class RequestsService {
 
   async update(id: string, updateRequestDto: UpdateRequestDto) {
     const request = await this.requestModel.findByIdAndUpdate(id, updateRequestDto, { new: true }).exec();
-  
+
     if (request && request.status === 'accepted') {
-      const existingChat = await this.chatModel.findOne({
-        participants: { $all: [request.sender, request.receiver] },
-        isActive: true,
-      }).exec();
-  
-      if (existingChat) {
-        existingChat.requests.push(new Types.ObjectId(request._id.toString()));
-        await existingChat.save();
-      } else {
-        const chatData = {
-          participants: [request.sender, request.receiver],
-          requests: [new Types.ObjectId(request._id.toString())],
-          messages: [],
-          isActive: true,
-        };
-  
-        const chat = new this.chatModel(chatData);
-        await chat.save();
-  
-        this.eventEmitter.emit('chat.created', chat);
-      }
-    } else if (request && request.status === 'completed') {
-      this.eventEmitter.emit('request.completed', {
-        requestId: request._id,
-        senderId: request.sender,
-        receiverId: request.receiver,
-      });
-  
-      const chat = await this.chatModel.findOne({
-        requests: request._id,
-        isActive: true,
-      }).exec();
-  
-      if (chat) {
-        const allRequests = await this.requestModel.find({
-          _id: { $in: chat.requests },
+        const existingChat = await this.chatModel.findOne({
+            participants: { $all: [request.sender, request.receiver] },
+            isActive: true,
         }).exec();
-  
-        const allRequestsCompleted = allRequests.every(req => req.status === 'completed');
-  
-        if (allRequestsCompleted) {
-          console.log('all request are completed');
-          chat.isActive = false;
-          await chat.save();
+
+        if (existingChat) {
+            existingChat.requests.push(new Types.ObjectId(request._id.toString()));
+            await existingChat.save();
+        } else {
+            const chatData = {
+                participants: [request.sender, request.receiver],
+                requests: [new Types.ObjectId(request._id.toString())],
+                messages: [],
+                isActive: true,
+            };
+
+            const chat = new this.chatModel(chatData);
+            await chat.save();
+
+            this.eventEmitter.emit('chat.created', chat);
         }
-      }
+    } else if (request && request.status === 'completed') {
+        // Mark items as unavailable
+        await this.itemModel.findByIdAndUpdate(request.itemOffered, { isAvailable: false }, { new: true }).exec();
+        await this.itemModel.findByIdAndUpdate(request.itemRequested, { isAvailable: false }, { new: true }).exec();
+
+        // Emit request completed event
+        this.eventEmitter.emit('request.completed', {
+            requestId: request._id,
+            senderId: request.sender,
+            receiverId: request.receiver,
+        });
+
+        // Archive the chat if all requests are completed
+        const chat = await this.chatModel.findOne({
+            requests: request._id,
+            isActive: true,
+        }).exec();
+
+        if (chat) {
+            const allRequests = await this.requestModel.find({
+                _id: { $in: chat.requests },
+            }).exec();
+
+            const allRequestsCompleted = allRequests.every(req => req.status === 'completed');
+
+            if (allRequestsCompleted) {
+                console.log('All requests are completed');
+                chat.isActive = false;
+                await chat.save();
+            }
+        }
     }
-  
+
     return request;
-  }
+}
 
   async getPendingRequests(userId) {
 
     const requests = await this.requestModel.find({ status: 'pending', receiver: userId }).exec();
+    return requests;
+  }
+
+  async findByItemId(itemId: string) {
+    const requests = await this.requestModel.find({
+      $or: [
+        { itemOffered: new Types.ObjectId(itemId) },
+        { itemRequested: new Types.ObjectId(itemId) },
+      ],
+    }).populate([
+      {
+        path: 'sender',
+        select: 'first_name last_name avatar',
+      },
+      {
+        path: 'receiver',
+        select: 'first_name last_name avatar',
+      },
+      {
+        path: 'itemRequested',
+        select: 'name condition photos',
+      },
+      {
+        path: 'itemOffered',
+        select: 'name condition photos',
+      },
+    ]).exec();
+  
+    if (!requests || requests.length === 0) {
+      throw new NotFoundException('No requests found for this item');
+    }
+  
     return requests;
   }
 

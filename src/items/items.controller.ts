@@ -64,10 +64,17 @@ export class ItemsController {
     @Put('/:id')
     @ApiOperation({ summary: 'Update an item' })
     @ApiParam({ name: 'id', description: 'Item ID' })
+    @ApiConsumes('multipart/form-data')
     @ApiBody({ type: UpdateItemDto })
     @ApiResponse({ status: 200, description: 'Item updated successfully.' })
-    async update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto): Promise<Item>{
-        return await this.itemService.updateItem(id, updateItemDto);
+    @UseInterceptors(FilesInterceptor('images', 5, multerConfig()))
+    async update(
+      @Param('id') id: string,
+      @Body() updateItemDto: UpdateItemDto,
+      @UploadedFiles() photos: Express.Multer.File[],
+    ): Promise<Item> {
+      const photoPaths = photos ? photos.map((photo) => photo.path) : undefined;
+      return await this.itemService.updateItem(id, { ...updateItemDto, photos: photoPaths });
     }
 
     @Delete('/:id')
