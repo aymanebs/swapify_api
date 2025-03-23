@@ -4,6 +4,7 @@ import { ItemsService } from './items.service';
 import { Types } from 'mongoose';
 import { CreateItemDto } from './dtos/create-items.dto';
 import { UpdateItemDto } from './dtos/update-items.dto';
+import { NotFoundException } from '@nestjs/common';
 
 jest.mock('../auth/guards/jwt-auth.guard', () => ({
   JwtAuthGuard: jest.fn().mockImplementation(() => ({
@@ -108,10 +109,31 @@ describe('ItemsController', () => {
     expect(service.getAllItems).toHaveBeenCalled();
   });
 
-  it('should update an item', async () => {
-    const updateItemDto = { name: 'Updated Item' };
-    expect(await controller.update('testId', updateItemDto)).toEqual(mockItem);
-    expect(service.updateItem).toHaveBeenCalledWith('testId', updateItemDto);
+  describe('update', () => {
+  
+    it('should update an item with photos', async () => {
+      const updateItemDto: UpdateItemDto = {
+        name: 'Updated Item',
+      };
+      const photos = [
+        { path: 'photo1.jpg' },
+        { path: 'photo2.jpg' },
+      ] as Express.Multer.File[];
+      const result = await controller.update(mockItem._id.toString(), updateItemDto, photos);
+      expect(service.updateItem).toHaveBeenCalledWith(mockItem._id.toString(), {
+        ...updateItemDto,
+        photos: ['photo1.jpg', 'photo2.jpg'],
+      });
+      expect(result).toEqual(mockItem);
+    });
+  
+    it('should throw NotFoundException if item not found', async () => {
+      jest.spyOn(service, 'updateItem').mockRejectedValue(new NotFoundException('Item not found'));
+      const updateItemDto: UpdateItemDto = {
+        name: 'Updated Item',
+      };
+      await expect(controller.update('invalidId', updateItemDto, [])).rejects.toThrow(NotFoundException);
+    });
   });
 
   it('should delete an item', async () => {
